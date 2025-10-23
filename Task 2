@@ -1,3 +1,4 @@
+
 #include <iostream>
 using namespace std;
 
@@ -17,7 +18,7 @@ void restrictedHanoi(int n, char from, char to, char mid) {
 
 int main() {
     int n;
-    cout << "Enter number of disks: ";
+    cout << "Number of Disks: ";
     cin >> n;
 
     restrictedHanoi(n, 'A', 'C', 'B');
@@ -29,3 +30,4 @@ int main() {
 
     return 0;
 }
+
