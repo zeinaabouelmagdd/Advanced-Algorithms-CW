@@ -1,0 +1,232 @@
+#include <iostream>
+#include <string>
+#include <vector>
+using namespace std;
+
+struct Node {
+    string key;  
+    Node* left;
+    Node* right;
+    int height;
+
+    Node(const string& k) {
+        key = k;
+        left = right = nullptr;
+        height = 1;
+    }
+};
+
+int getHeight(Node* n) {
+    if (n == nullptr) return 0;
+    return n->height;
+}
+
+int getBalance(Node* n) {
+    if (n == nullptr) return 0;
+    return getHeight(n->left) - getHeight(n->right);
+}
+
+int maxInt(int a, int b) {
+    return (a > b) ? a : b;
+}
+
+Node* rotateRight(Node* y) {
+    Node* x = y->left;
+    Node* T2 = x->right;
+
+    x->right = y;
+    y->left = T2;
+
+    y->height = 1 + maxInt(getHeight(y->left), getHeight(y->right));
+    x->height = 1 + maxInt(getHeight(x->left), getHeight(x->right));
+
+    return x; 
+}
+
+
+Node* rotateLeft(Node* x) {
+    Node* y = x->right;
+    Node* T2 = y->left;
+
+    y->left = x;
+    x->right = T2;
+
+    x->height = 1 + maxInt(getHeight(x->left), getHeight(x->right));
+    y->height = 1 + maxInt(getHeight(y->left), getHeight(y->right));
+
+    return y; 
+}
+
+Node* insertAVL(Node* root, const string& key) {
+    if (root == nullptr)
+        return new Node(key);
+
+    if (key < root->key)
+        root->left = insertAVL(root->left, key);
+    else if (key > root->key)
+        root->right = insertAVL(root->right, key);
+    else
+        return root; 
+        
+    root->height = 1 + maxInt(getHeight(root->left), getHeight(root->right));
+
+    int balance = getBalance(root);
+
+    if (balance > 1 && key < root->left->key)
+        return rotateRight(root);
+
+    if (balance < -1 && key > root->right->key)
+        return rotateLeft(root);
+
+    if (balance > 1 && key > root->left->key) {
+        root->left = rotateLeft(root->left);
+        return rotateRight(root);
+    }
+
+    if (balance < -1 && key < root->right->key) {
+        root->right = rotateRight(root->right);
+        return rotateLeft(root);
+    }
+
+    return root;
+}
+
+bool startsWith(const string& word, const string& prefix) {
+    if (prefix.size() > word.size()) return false;
+    return word.compare(0, prefix.size(), prefix) == 0;
+}
+
+void findAllWithPrefix(Node* root, const string& prefix,
+                       vector<string>& result) {
+    if (root == nullptr) return;
+
+    int cmp = root->key.compare(0, prefix.size(), prefix);
+
+    if (cmp == 0) {
+        findAllWithPrefix(root->left, prefix, result);
+        result.push_back(root->key);
+        findAllWithPrefix(root->right, prefix, result);
+    }
+    else if (cmp < 0) {
+        findAllWithPrefix(root->right, prefix, result);
+    }
+    else { 
+        findAllWithPrefix(root->left, prefix, result);
+    }
+}
+
+
+int main() {
+    vector<string> dictionary = {
+        "ace","act","action","active","actor","add","address","admin",
+        "advantage","and",
+
+        "back","background","backup","balance","ball","ban","band","bank",
+        "bar","base",
+
+        "call","camp","cat","catch","compile","compiler","compute",
+        "computer","computing","constant",
+
+        "data","database","date","day","deal","debug","debugger","delete",
+        "demo","develop",
+
+        "edit","editor","effect","element","email","engine","engineer",
+        "enter","entry","error",
+
+        "face","factor","fail","false","fast","file","files","filesystem",
+        "filter","find",
+
+        "game","gate","generate","generic","get","git","github","global",
+        "go","graph",
+
+        "hand","handle","handler","hash","hashtag","head","header","heap",
+        "help","host",
+
+        "icon","id","if","image","import","in","index","init","input",
+        "install",
+
+        "jar","java","javascript","job","join","journal","journey","joy",
+        "json","jump",
+
+        "key","keyboard","keydown","keyframe","keynote","keypad",
+        "keystore","keyup","keyword","keys",
+
+        "label","last","layer","layout","lead","learn","left","link",
+        "list","load",
+
+        "macro","mail","main","manage","manager","map","margin","master",
+        "memory","merge",
+
+        "name","namespace","nav","navigate","navigation","net","network",
+        "new","node","note",
+
+        "object","observe","observer","offline","online","open","operator",
+        "option","order","output",
+
+        "pack","package","packet","page","parallel","parameter","parse",
+        "parser","path","post",
+
+        "query","question","queue","quick","quicksort","quiet","quit",
+        "quiz","quota","quote",
+
+        "race","radio","range","rank","react","read","record","recursive",
+        "refactor","register",
+
+        "save","scan","scanner","scope","screen","script","scroll",
+        "search","server","stack",
+
+        "table","tag","target","task","team","temp","template","test",
+        "testing","text",
+
+        "ui","unit","unittest","unix","update","upgrade","upload","url",
+        "user","username",
+
+        "val","validate","validation","value","var","variable","vector",
+        "version","view","virtual",
+
+        "wait","warn","warning","web","webhook","webkit","webpack",
+        "website","while","window",
+
+        "xml","xmlns","xor","xpath","xquery","xref","xss","xsl","xslt",
+        "x-axis",
+
+        "yacht","yard","yarn","year","yearly","yellow","yesterday",
+        "yield","you","your",
+
+        "zero","zebra","zip","zipper","zigzag","zone","zombie","zoom",
+        "zoomin","zoomout"
+    };
+
+    Node* root = nullptr;
+    for (const string& w : dictionary) {
+        root = insertAVL(root, w);
+    }
+
+    cout << "Dictionary loaded (" << dictionary.size() << " words).\n";
+    cout << "Type a prefix to get suggestions or type 'exit' to quit.\n\n";
+
+    string prefix;
+    while (true) {
+        cout << "Prefix: ";
+        if (!(cin >> prefix)) break;  
+
+        if (prefix == "exit")
+            break;
+
+        vector<string> suggestions;
+        findAllWithPrefix(root, prefix, suggestions);
+
+        if (suggestions.empty()) {
+            cout << "No words found starting with \"" << prefix << "\".\n\n";
+        } else {
+            cout << "Suggestions:\n";
+            for (const string& s : suggestions) {
+                cout << "  " << s << "\n";
+            }
+            cout << "\n";
+        }
+    }
+
+    cout << " \n";
+    return 0;
+}
