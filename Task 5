@@ -1,0 +1,53 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+
+void printDisks(const vector<char>& disks) {
+    for (char c : disks) {
+        cout << c << " ";
+    }
+    cout << endl;
+}
+
+int sortDisks(vector<char>& disks) {
+    int totalMoves = 0;
+    int n = disks.size() / 2; 
+    
+    for (int pass = 0; pass < n; ++pass) {
+        for (int i = 0; i < (int)disks.size() - 1; ++i) {
+            if (disks[i] == 'D' && disks[i + 1] == 'L') {
+                swap(disks[i], disks[i + 1]);
+                totalMoves++;
+            }
+        }
+    }
+
+    return totalMoves;
+}
+
+int main() {
+    int n;
+    cout << "enter n (number of dark and light disks each): ";
+    cin >> n;
+
+    vector<char> disks(2 * n);
+    for (int i = 0; i < 2 * n; ++i) {
+        if (i % 2 == 0)
+            disks[i] = 'D';
+        else
+            disks[i] = 'L';
+    }
+
+    cout << "initial arrangement: ";
+    printDisks(disks);
+
+    int moves = sortDisks(disks);
+
+    cout << "final arrangement: ";
+    printDisks(disks);
+
+    cout << "total moves (neighbor swaps): " << moves << endl;
+    cout << "expected moves: " << n * (n + 1) / 2 << endl;
+
+    return 0;
+}
