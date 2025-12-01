@@ -43,11 +43,9 @@ int main() {
 
     int moves = sortDisks(disks);
 
-    cout << "final arrangement: ";
+    cout << "final arrangement:   ";
     printDisks(disks);
 
-    cout << "total moves (neighbor swaps): " << moves << endl;
-    cout << "expected moves: " << n * (n + 1) / 2 << endl;
-
+    cout << "total moves: " << moves << endl;
     return 0;
 }
