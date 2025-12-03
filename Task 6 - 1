@@ -1,0 +1,52 @@
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+
+char weigh(int left, int right) {
+    if (left == right) return 'E';
+    return (left > right) ? 'L' : 'R';
+}
+
+int main() {
+    srand(time(NULL));
+
+    int coins[3] = {10, 10, 10};  
+
+    int fakeIndex = rand() % 3; 
+    bool heavier = rand() % 2; 
+    
+    coins[fakeIndex] += (heavier ? 1 : -1);
+
+    char first = weigh(coins[0], coins[1]);
+
+    if (first == 'E') {
+        char second = weigh(coins[2], coins[0]);
+
+        if (second == 'L')
+            cout << "Fake coin: C (Heavier)\n";
+        else
+            cout << "Fake coin: C (Lighter)\n";
+    } 
+    else {
+        int heavyIndex  = (first == 'L') ? 0 : 1;
+        int lightIndex  = (first == 'L') ? 1 : 0;
+
+        char second = weigh(coins[heavyIndex], coins[2]); 
+
+        if (second == 'E') {
+            cout << "Fake coin: " 
+                 << (lightIndex == 0 ? "A" : "B")
+                 << " (Lighter)\n";
+        }
+        else if (second == 'L') {
+            cout << "Fake coin: "
+                 << (heavyIndex == 0 ? "A" : "B")
+                 << " (Heavier)\n";
+        }
+        else {
+            cout << "Impossible outcome (logic error).\n";
+        }
+    }
+    return 0;
+}
