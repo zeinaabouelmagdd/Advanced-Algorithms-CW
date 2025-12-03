@@ -24,9 +24,9 @@ int main() {
         char second = weigh(coins[2], coins[0]);
 
         if (second == 'L')
-            cout << "Fake coin: C (Heavier)\n";
+            cout << "Fake Coin: C (Heavier)\n";
         else
-            cout << "Fake coin: C (Lighter)\n";
+            cout << "Fake Coin: C (Lighter)\n";
     } 
     else {
         int heavyIndex  = (first == 'L') ? 0 : 1;
@@ -40,12 +40,12 @@ int main() {
                  << " (Lighter)\n";
         }
         else if (second == 'L') {
-            cout << "Fake coin: "
+            cout << "Fake Coin: "
                  << (heavyIndex == 0 ? "A" : "B")
                  << " (Heavier)\n";
         }
         else {
-            cout << "Impossible outcome (logic error).\n";
+            cout << "Impossible Outcome (logic error).\n";
         }
     }
     return 0;
