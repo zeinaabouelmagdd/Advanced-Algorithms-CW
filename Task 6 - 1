@@ -35,7 +35,7 @@ int main() {
         char second = weigh(coins[heavyIndex], coins[2]); 
 
         if (second == 'E') {
-            cout << "Fake coin: " 
+            cout << "Fake Coin: " 
                  << (lightIndex == 0 ? "A" : "B")
                  << " (Lighter)\n";
         }
