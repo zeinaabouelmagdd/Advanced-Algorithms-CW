@@ -68,7 +68,7 @@ int main() {
     } else {
         cout << "You can buy " << chosen.size() << " item(s):\n";
         for (size_t i = 0; i < chosen.size(); ++i) {
-            cout << " - " << chosen[i].name << " (price: " << chosen[i].price << ")\n";
+            cout << "- " << chosen[i].name << " (price: " << chosen[i].price << ")\n";
         }
         cout << "\nTotal cost: " << totalCost << "\n";
         cout << "Remaining budget: " << (budget - totalCost) << "\n";
