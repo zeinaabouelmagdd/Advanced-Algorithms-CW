@@ -1,1 +1,93 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+struct Item {
+    string name;
+    int price;
+};
+
+int main() {
+
+    int budget;
+    cout << "Enter your shopping budget: ";
+    cin >> budget;
+
+    if (budget <= 0) {
+        cout << "Budget must be positive. Try again.\n";
+        return 0;
+    }
+
+    int n;
+    cout << "How many items are you considering today? ";
+    cin >> n;
+
+    if (n <= 0) {
+        cout << "You must have at least one item to consider. Try again.\n";
+        return 0;
+    }
+
+    vector<Item> items(n);
+    cout << "Please enter the name and price of each item.\n\n";
+
+    for (int i = 0; i < n; ++i) {
+        cout << "ITEM " << (i + 1) << " NAME: ";
+        cin >> items[i].name;
+        cout << "ITEM " << (i + 1) << " PRICE: ";
+        cin >> items[i].price;
+
+        if (items[i].price <= 0) {
+            cout << "Price must be positive. Setting this item price to 1.\n";
+            items[i].price = 1;
+        }
+        cout << "\n";
+    }
+
+    vector<vector<int>> dp(n + 1, vector<int>(budget + 1, 0));
+
+    for (int i = 1; i <= n; ++i) {
+        int price = items[i - 1].price; 
+        for (int w = 0; w <= budget; ++w) {
+            dp[i][w] = dp[i - 1][w];
+
+            if (price <= w) {
+                int withItem = 1 + dp[i - 1][w - price];
+                if (withItem > dp[i][w]) {
+                    dp[i][w] = withItem;
+                }
+            }
+        }
+    }
+
+    int maxItems = dp[n][budget];
+
+    vector<Item> chosen;
+    int w = budget;
+    for (int i = n; i >= 1; --i) {
+        if (dp[i][w] != dp[i - 1][w]) {
+            chosen.push_back(items[i - 1]);
+            w -= items[i - 1].price; 
+        }
+    }
+
+    cout << "Your budget: " << budget << "\n";
+
+    if (maxItems == 0) {
+        cout << "Unfortunately, you cannot afford any of the items.\n";
+    } else {
+        cout << "You can buy 1 item(s): " << maxItems << "\n";
+
+        int totalCost = 0;
+        for (int i = (int)chosen.size() - 1; i >= 0; --i) {
+            cout << "- " << chosen[i].name
+                 << " (price: " << chosen[i].price << ")\n";
+            totalCost += chosen[i].price;
+        }
+
+        cout << "\nTotal cost: " << totalCost << "\n";
+        cout << "Remaining budget: " << (budget - totalCost) << "\n";
+    }
+    return 0;
+}
 
