@@ -76,7 +76,7 @@ int main() {
     if (maxItems == 0) {
         cout << "Unfortunately, you cannot afford any of the items.\n";
     } else {
-        cout << "You can buy 1 item(s): " << maxItems << "\n";
+        cout << "You can buy " << maxItems << " item(s):\n";
 
         int totalCost = 0;
         for (int i = (int)chosen.size() - 1; i >= 0; --i) {
@@ -90,4 +90,3 @@ int main() {
     }
     return 0;
 }
-
