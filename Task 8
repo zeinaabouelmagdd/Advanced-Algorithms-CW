@@ -1,1 +1,123 @@
-insert later
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+void setupInputs(int &numStacks, int &stackHeight) {
+    cout << "Enter number of stacks: ";
+    cin >> numStacks;
+    cout << "Enter number of balls per stack: ";
+    cin >> stackHeight;
+}
+
+void buildStacks(vector<vector<string>> &stacks, int numStacks, int stackHeight) {
+    stacks.resize(numStacks);
+
+    cout << "\nEnter colors for each stack (top to bottom):\n";
+    cout << "Use 'empty' for an empty slot.\n\n";
+
+    for (int i = 0; i < numStacks; i++) {
+        cout << "Stack " << i << ": ";
+        for (int j = 0; j < stackHeight; j++) {
+            string color;
+            cin >> color;
+            if (color != "empty")
+                stacks[i].push_back(color);
+        }
+    }
+}
+
+void printStacks(const vector<vector<string>> &stacks) {
+    cout << "\nCurrent stacks:\n";
+    for (int i = 0; i < stacks.size(); i++) {
+        cout << "Stack " << i << ": ";
+        for (const string &ball : stacks[i]) {
+            cout << ball << " ";
+        }
+        cout << endl;
+    }
+}
+
+bool isSolved(const vector<vector<string>> &stacks, int stackHeight) {
+    for (const auto &stack : stacks) {
+        if (stack.empty()) continue;
+        if (stack.size() != stackHeight) return false;
+        string color = stack[0];
+        for (const string &ball : stack)
+            if (ball != color) return false;
+    }
+    return true;
+}
+
+string convertToString(const vector<vector<string>> &stacks) {
+    string s = "";
+    for (const auto &stack : stacks) {
+        s += "|";
+        for (const auto &ball : stack)
+            s += ball + ",";
+    }
+    return s;
+}
+
+bool dfsSolve(vector<vector<string>> &stacks, int stackHeight, vector<string> &visited) {
+    if (isSolved(stacks, stackHeight)) {
+        cout << "\nSolved.\n";
+        printStacks(stacks);
+        return true;
+    }
+
+    string state = convertToString(stacks);
+    for (const string &oldState : visited)
+        if (oldState == state)
+            return false;
+
+    visited.push_back(state);
+
+    int n = stacks.size();
+
+    for (int i = 0; i < n; i++) {
+        if (stacks[i].empty()) continue;
+
+        for (int j = 0; j < n; j++) {
+            if (i == j) continue;
+
+            if (stacks[j].size() < stackHeight &&
+               (stacks[j].empty() || stacks[j].back() == stacks[i].back())) {
+
+                string ball = stacks[i].back();
+                stacks[i].pop_back();
+                stacks[j].push_back(ball);
+
+                printStacks(stacks);
+
+                if (dfsSolve(stacks, stackHeight, visited))
+                    return true;
+
+                stacks[j].pop_back();
+                stacks[i].push_back(ball);
+            }
+        }
+    }
+    return false;
+}
+
+int main() {
+    int numStacks, stackHeight;
+
+    setupInputs(numStacks, stackHeight);
+
+    vector<vector<string>> stacks;
+    buildStacks(stacks, numStacks, stackHeight);
+
+    printStacks(stacks);
+
+    vector<string> visited;
+    cout << "\nSolving...\n";
+
+    bool solved = dfsSolve(stacks, stackHeight, visited);
+
+    if (!solved)
+        cout << "\nNo solution found.\n";
+
+    return 0;
+}
